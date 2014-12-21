@@ -1,17 +1,17 @@
 # encoding: UTF-8
 class Sro29
   
-  FIELDS = [
-      :inn,
-      :name,
-      :short_name,
-      :city,
-      :status,
-      :resolution_date,
-      :legal_address,
-      :certificate_number,
-      :ogrn
-    ]
+  FIELDS = {
+      :inn => 5,
+      :name => 2,
+      :short_name => 3,
+      :city => 8,
+      :status => -1,
+      :resolution_date => 1,
+      :legal_address => 8,
+      :certificate_number => 0,
+      :ogrn => -1
+  }
   
   def initialize
     @data, @links = [], ['http://www.sro29.ru/index.php/reestr-sro']
@@ -20,7 +20,7 @@ class Sro29
   def perform
     list_links
     iterate
-    # p @data
+    # p Hash[@data.group_by {|x| x}.map {|k,v| [k,v.count]}]
     @data
   end
   
@@ -37,23 +37,30 @@ class Sro29
   end
 
   def iterate
-    @links.each_with_index do |link, index|
+    @links.each_with_index do |link, link_index|
       page = Nokogiri::HTML(open(link))
-      # xpath = index == 0 ? '//td[@class="ce2"]/p/text()' : '//td[@class="xl64"]/text()'
       trs = '//table[@border="0" and @cellspacing="0"]/tbody/tr/.'
       header = true
-      page.xpath(trs).each_with_index do |tr, index|
-      # page.xpath(xpath).each_with_index do |org, index|
-      # page.xpath('//div[@class="block-i"]/div[contains(@style,"cursor:pointer")]/p/.').each do |org|
-        # org = org.to_s.encode('utf-8')
-        # @org_fields = org.match(REGEXP)
-        # @org = {}
-        @org = tr.to_s
-        # p "#{index} - #{@org}"
+      page.xpath(trs).each_with_index do |tr, tr_index|
+        @org = {}
+        tr.xpath('./td/.').each_with_index do |td, td_index|
+          field = FIELDS.key(td_index)
+          self.__send__(field, CGI::unescapeHTML(td.to_s.gsub(/(<\/?[^>]*>|\n)/, ''))) if field
+          # @org[:"#{td_index}"] = CGI::unescapeHTML(td.to_s.gsub(/(<\/?[^>]*>|\n)/, ''))
+        end
+        # p @org
+        # exit
         # @required_fields.each { |field| self.__send__(field) }
-        @data << @org if !header
+        @data << @org if tr_index > 0
         header = false
       end
+      # p @data
+      # exit
     end
   end
+  
+  def method_missing(name, data)
+    @org[name] = data
+  end
+  
 end
