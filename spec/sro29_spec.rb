@@ -30,11 +30,11 @@ describe Sro29 do
       @test.perform
     end
 
-    # it 'should return array with 334 elements' do
-    #   data = @test.perform
-    #   expect(data.class).to eq(Array)
-    #   expect(data.length).to eq(334)
-    # end
+    it 'should return array with 334 elements' do
+      data = @test.perform
+      expect(data.class).to eq(Array)
+      expect(data.length).to eq(334)
+    end
   
   end
   
