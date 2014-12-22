@@ -20,7 +20,7 @@ class Sro29
   def perform
     list_links
     iterate
-    # p Hash[@data.group_by {|x| x}.map {|k,v| [k,v.count]}]
+    p @data
     @data
   end
   
@@ -51,6 +51,7 @@ class Sro29
         # p @org
         # exit
         # @required_fields.each { |field| self.__send__(field) }
+        FIELDS.select{ |field, num| num == -1 }.each{ |field, num| @org[field] = '-' }
         @data << @org if tr_index > 0
         header = false
       end
