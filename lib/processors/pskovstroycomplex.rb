@@ -31,7 +31,7 @@ class Pskovstroycomplex
     Capybara.visit @list_of_links
 
     raw_inns = Capybara.all 'tr td:first-child'
-    raw_inns[0..10].each do |raw_inn|
+    raw_inns.each do |raw_inn|
       inn = raw_inn.text.match(/(\d+\.) (\d+)/)[2]
       response = RestClient.post("http://pskovstroycomplex.ru/formreestr.php", 
         "Inn=#{inn}".postize
