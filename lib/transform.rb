@@ -10,7 +10,7 @@ class String
   end
 
 
-  #monkey patch strip message so that they strip off ANY spaces
+  #monkey patch strip method so that it strips off ANY spaces
   def strip
     self.gsub /\A[[:space:]]+|[[:space:]]+\z/, ''
   end
